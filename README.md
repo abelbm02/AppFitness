@@ -82,4 +82,4 @@ FitScience/
 Este proyecto es para uso personal y educativo. Todos los derechos reservados.
 
 ---
-*Desarrollado con ❤️ y Ciencia por Antigravity AI.*
+*Desarrollado por Abel Blanco Muñoz.*
