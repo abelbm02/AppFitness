@@ -50,3 +50,4 @@ export class ScoreEngine {
     return { total, nutritionScore, sleepScore, workoutScore };
   }
 }
+

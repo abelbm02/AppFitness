@@ -102,3 +102,4 @@ export class NutritionEngine {
     return "¡Buen trabajo! Estás en el rango ideal de macros y calorías para tu objetivo.";
   }
 }
+

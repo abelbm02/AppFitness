@@ -479,3 +479,4 @@ export const WorkoutsTab: React.FC<Props> = ({
     </div>
   );
 };
+

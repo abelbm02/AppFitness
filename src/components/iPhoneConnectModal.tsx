@@ -101,3 +101,4 @@ export const IPhoneConnectModal: React.FC<Props> = ({ isOpen, onClose }) => {
     </div>
   );
 };
+

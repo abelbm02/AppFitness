@@ -20,3 +20,4 @@ export const triggerHaptic = (type: 'light' | 'medium' | 'success' | 'warning' =
     }
   }
 };
+

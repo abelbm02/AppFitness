@@ -1,85 +1,81 @@
-# 🚀 FitScience - Entrenamiento & Nutrición Inteligente
+# 🚀 FitScience - Entrenamiento & Nutrición Inteligente (Cross-Platform)
 
-**FitScience** es una aplicación nativa para iOS (iPhone) diseñada para llevar el entrenamiento y la nutrición al siguiente nivel mediante el uso de **evidencia científica real**. 
+**FitScience** es una aplicación multiplataforma de alto rendimiento diseñada para llevar el entrenamiento y la nutrición al siguiente nivel mediante el uso de **evidencia científica real**.
 
-Desarrollada con **SwiftUI** y **SwiftData**, la app ofrece una experiencia premium, fluida y totalmente personalizada tanto para uso personal como para escalar a un producto comercial.
+Funciona tanto en **Windows (PC/Escritorio)** como en **iPhone (iOS)** mediante tecnología **Progressive Web App (PWA)** de última generación con estética y sensación táctil nativa de Apple (iOS Safe Areas, haptics, dark theme de alto contraste).
 
 ---
 
-## ✨ Características Principales
+## 📱 ¿Cómo ejecutarlo y verlo en activo AHORA MISMO?
 
-### 👥 Sistema Multi-Perfil
-Diseñado desde el inicio para permitir múltiples usuarios independientes (ej: tú y tu pareja). Cada perfil cuenta con su propia base de datos de:
-- Medidas corporales (Peso, Altura, Edad).
-- Objetivos específicos (Pérdida de grasa, Ganancia muscular, Recomposición).
-- Historial de entrenamientos y nutrición.
+El servidor de desarrollo ya está configurado y optimizado para emitir en tu red local.
 
-### 🔬 Base Científica Obligatoria
-Nada de recomendaciones genéricas. La lógica de la app se basa en:
-- **Fórmula Mifflin-St Jeor** para el cálculo preciso de la Tasa Metabólica Basal (TMB).
-- **Proteína Optimizada**: Ajuste automático entre 1.6–2.2 g/kg.
-- **Volumen de Entrenamiento**: Monitoreo de 10-20 series semanales por grupo muscular.
-- **Sobrecarga Progresiva**: Detección inteligente de estancamientos y sugerencias de aumento de carga.
+### 1. En tu ordenador con Windows:
+Abre tu navegador (Chrome, Edge o Brave) y visita:
+👉 **[http://localhost:5173](http://localhost:5173)**
 
-### 🏋️ Registro de Entrenamiento (Logger)
-- Creación de rutinas personalizadas.
-- Registro detallado de series, repeticiones, peso y **RPE**.
-- Seguimiento de PRs automáticos y gráficas de progresión por ejercicio.
+*(Opcional: En la barra de direcciones de Chrome/Edge, puedes pulsar el icono de "Instalar FitScience" para tenerla como app de escritorio independiente).*
 
-### 🍎 Nutrición IA Adaptativa
-- Cálculo dinámico de macros según objetivo y nivel de actividad.
-- Feedback en tiempo real: "Te faltan 30g de proteína para tu objetivo".
-- Ajustes semanales automáticos basados en la tendencia de peso y rendimiento.
+---
+
+### 2. En tu teléfono iPhone:
+1. Asegúrate de que tu iPhone esté conectado a la **misma red Wi-Fi** que este PC.
+2. Abre la cámara de tu iPhone y escanea el código QR que aparece al pulsar **"Ver en iPhone"** en la esquina superior de la aplicación en tu PC, o abre **Safari** y escribe directamente:
+   👉 **`http://192.168.1.64:5173`**
+3. Una vez cargada en Safari en tu iPhone:
+   - Toca el botón de **Compartir** (el icono del cuadrado con una flecha hacia arriba en la parte inferior de Safari).
+   - Desliza hacia abajo y pulsa **"Añadir a la pantalla de inicio"** (Add to Home Screen).
+   - Pulsa **Añadir**.
+4. ¡Listo! Se creará el icono de **FitScience** en la pantalla de inicio de tu iPhone. Al abrirlo, se ejecutará a pantalla completa sin barras de navegador, comportándose al 100% como una aplicación nativa de iOS.
+
+---
+
+## ✨ Características y Módulos Implementados
+
+### 🏠 1. Dashboard Diario ("Hoy")
+* **Daily Score Científico (0-100)**: Ponderación algorítmica de nutrición (50%), horas de descanso (30%) y entrenamiento completado (20%).
+* **Anillos de Macronutrientes**: Progreso en tiempo real de Calorías, Proteínas, Carbohidratos y Grasas con cálculo de restantes.
+* **IA Adaptativa Científica**: Sugerencias dinámicas según tu balance calórico, ingesta proteica y fatiga muscular.
+* **Resumen de Volumen Semanal**: Monitor de 10 a 20 series semanales por grupo muscular (rango óptimo de hipertrofia según Schoenfeld et al.).
+* **Acceso Rápido al Entreno**: Previsualización de la rutina programada para el día de hoy.
+
+### 🏋️ 2. Entrenamientos (Logger de Fuerza con RPE)
+* **Cronómetro de Sesión en Vivo**: Control de tiempo de entrenamiento activo.
+* **Sobrecarga Progresiva Automática**: Detección inteligente de mejora para recomendar incrementos de peso (+2.5 kg).
+* **Detección de Estancamientos (*Plateau*)**: Alertas si no ha habido progresión de volumen en 3 sesiones consecutivas.
+* **Escala RPE (1-10)**: Registro de esfuerzo percibido y repeticiones en recámara (RIR) por cada serie.
+* **Celebración con Confetti**: Animación de victoria al completar un entrenamiento.
+
+### 🥗 3. Comidas y Hábitos (Nutrición Científica)
+* **Fórmula Mifflin-St Jeor**: Cálculo personalizado de Tasa Metabólica Basal (TMB) y Gasto Total Diario (TDEE).
+* **Proteína Optimizada**: Ajuste a **2.0 g/kg** de peso corporal.
+* **Registro Rápido de 1 Clic**: Base de datos preinstalada de alimentos saludables (Pechuga de pollo, arroz, avena, huevos, proteína whey, yogur griego, etc.).
+* **Creador de Alimentos Personalizados**: Para registrar cualquier receta o comida externa.
+* **Monitor de Sueño e Hidratación**: Control de horas de descanso y registro de vasos de agua diarios.
+
+### 📅 4. Planning Semanal (Entreno & Ciclos de Calorías)
+* **División semanal de Lunes a Domingo**: Asignación de rutinas por días (Empuje, Tracción, Piernas, Descanso activo).
+* **Estrategia Nutricional**: Sincronización de días altos en carbohidratos en entrenamientos pesados y días de mantenimiento en descanso.
+* **Editor Interactivo**: Personaliza grupos musculares, días libres y objetivos por día.
+
+### 📊 5. Gráficas & Calculadoras Científicas
+* **Adherencia Proteica**: Gráfica de barras de los últimos 7 días con línea de meta.
+* **Distribución de Volumen Muscular**: Gráfica sectorial con porcentaje de series efectivas por grupo muscular.
+* **Calculadora de 1RM (Epley)**: Estima tu repetición máxima teórica y tus cargas para 5RM (85%) y 10RM (75%).
+
+### 👥 6. Perfiles y Copia de Seguridad
+* **Sistema Multi-Perfil**: Alterna al instante entre diferentes usuarios (ej. tú y tu pareja) con bases de datos independientes.
+* **Exportar / Importar Copia de Seguridad**: Descarga tus datos en formato JSON para transferirlos o respaldarlos con un clic.
 
 ---
 
 ## 🛠️ Stack Tecnológico
-
-- **Lenguaje:** Swift 5.10+
-- **Interfaz:** SwiftUI (declarativa y reactiva)
-- **Persistencia:** SwiftData (Base de datos local relacional introducida en iOS 17)
-- **Gráficas:** SwiftUI Charts
-- **Arquitectura:** MVVM + Service-Oriented Logic (Clean Architecture)
-- **Notificaciones:** UNUserNotificationCenter para recordatorios inteligentes.
+* **Frontend**: React 18 + TypeScript + Vite 6
+* **Estilos**: Tailwind CSS con paleta de diseño nativa de Apple (iOS Dark Theme)
+* **PWA & Mobile**: Viewport fit cover, Safe Area insets para Dynamic Island / Notch de iPhone, Web App Manifest
+* **Iconografía & Haptics**: Lucide Icons + Vibration API
+* **Persistencia**: LocalStorage con migración y exportación JSON completa
 
 ---
 
-## 📂 Estructura del Proyecto
-
-```text
-FitScience/
-├── 📱 App/                 # Punto de entrada y navegación (MainTabView)
-├── 📊 Models/              # Esquema de la base de datos SwiftData
-├── 🧠 Services/            # Motores científicos (NutritionEngine, TrainingEngine, etc.)
-├── 🖥️ ViewModels/          # Lógica de estados y preparación de datos
-├── 🎨 Views/               # Componentes de UI y pantallas principales
-└── ⚙️ Core/                # Constantes, Enums y lógicas globales
-```
-
----
-
-## 🚀 Instalación y Ejecución
-
-1. Clona este repositorio o descarga los archivos.
-2. Abre el proyecto en **Xcode 15.0+**.
-3. Asegúrate de tener seleccionado un Simulador o iPhone físico con **iOS 17.0+**.
-4. En **Signing & Capabilities**, selecciona tu equipo de desarrollo de Apple.
-5. Pulsa `Cmd + R` para compilar y ejecutar.
-
----
-
-## 📈 Hoja de Ruta (Roadmap)
-
-- [ ] Integración con **Apple HealthKit** (Pasos y sueño automático).
-- [ ] Sincronización con **iCloud** para multi-dispositivo.
-- [ ] Versión para **Apple Watch**.
-- [ ] Backend en la nube para suscripciones y comunidad.
-
----
-
-## 📄 Licencia
-
-Este proyecto es para uso personal y educativo. Todos los derechos reservados.
-
----
-*Desarrollado por Abel Blanco Muñoz.*
+*Desarrollado para Abel Blanco Muñoz.*

@@ -61,3 +61,4 @@ def create_app_icon(size, filename):
 
 create_app_icon(192, "public/icon-192.png")
 create_app_icon(512, "public/icon-512.png")
+

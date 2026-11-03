@@ -87,3 +87,4 @@ export interface NutritionMacros {
   carbs: number;
   fats: number;
 }
+

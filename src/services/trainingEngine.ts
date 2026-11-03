@@ -114,3 +114,4 @@ export class TrainingEngine {
     return { summary, lowMuscles, highMuscles, optimalMuscles };
   }
 }
+
