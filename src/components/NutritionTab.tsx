@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { UserProfile, NutritionLog, FoodItem } from '../types';
 import { NutritionEngine } from '../services/nutritionEngine';
 import { COMMON_FOODS } from '../services/storage';
-import { Utensils, Plus, Trash2, Moon, Droplets, ChevronDown, Check, Sparkles } from 'lucide-react';
+import { Utensils, Plus, Trash2, Moon, Droplets, RotateCcw, Sparkles } from 'lucide-react';
 import { triggerHaptic } from '../services/haptics';
 
 interface Props {
   user: UserProfile;
   todayLog?: NutritionLog;
   onSaveLog: (log: NutritionLog) => void;
+  onResetToday?: () => void;
 }
 
 export const NutritionTab: React.FC<Props> = ({
   user,
   todayLog,
   onSaveLog,
+  onResetToday,
 }) => {
   const targetMacros = NutritionEngine.calculateTargetMacros(user);
   const [selectedMeal, setSelectedMeal] = useState<FoodItem['mealType']>('almuerzo');
@@ -28,7 +30,7 @@ export const NutritionTab: React.FC<Props> = ({
   const [customFats, setCustomFats] = useState('');
   const [customPortion, setCustomPortion] = useState('100g');
 
-  // Create current log if missing
+  // Create current log if missing (Starts at 0!)
   const currentLog: NutritionLog = todayLog || {
     id: `log-${Date.now()}`,
     userId: user.id,
@@ -37,8 +39,8 @@ export const NutritionTab: React.FC<Props> = ({
     protein: 0,
     carbs: 0,
     fats: 0,
-    sleepHours: 8,
-    waterLiters: 2.5,
+    sleepHours: 0,
+    waterLiters: 0,
     foods: []
   };
 
@@ -121,9 +123,27 @@ export const NutritionTab: React.FC<Props> = ({
     triggerHaptic('light');
     const updated: NutritionLog = {
       ...currentLog,
-      waterLiters: Math.max(0, Math.round((currentLog.waterLiters + liters) * 10) / 10)
+      waterLiters: Math.max(0, Math.round(((currentLog.waterLiters || 0) + liters) * 10) / 10)
     };
     onSaveLog(updated);
+  };
+
+  const handleResetDay = () => {
+    if (confirm('¿Vaciar y poner a 0 todas las calorías, comidas e hidratación de hoy?')) {
+      triggerHaptic('warning');
+      const resetLog: NutritionLog = {
+        ...currentLog,
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fats: 0,
+        sleepHours: 0,
+        waterLiters: 0,
+        foods: []
+      };
+      onSaveLog(resetLog);
+      if (onResetToday) onResetToday();
+    }
   };
 
   const mealTypes: { id: FoodItem['mealType']; label: string; emoji: string }[] = [
@@ -147,9 +167,19 @@ export const NutritionTab: React.FC<Props> = ({
             Nutrición & Hábitos
           </h2>
           <p className="text-xs text-zinc-400">
-            Base científica: <strong>{targetMacros.calories} kcal</strong> • <strong>{targetMacros.protein}g</strong> Proteína
+            Objetivo: <strong>{targetMacros.calories} kcal</strong> • <strong>{targetMacros.protein}g</strong> Proteína
           </p>
         </div>
+
+        {/* Botón de Vaciar / Reiniciar Día */}
+        <button
+          onClick={handleResetDay}
+          title="Poner a 0 datos de hoy"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-xl text-xs font-semibold border border-white/10 transition active:scale-95"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Poner a 0</span>
+        </button>
       </div>
 
       {/* Balance Diario de Macros */}
@@ -163,7 +193,7 @@ export const NutritionTab: React.FC<Props> = ({
             </div>
           </div>
           <div className="text-right">
-            <span className="text-xs text-zinc-400">Restante</span>
+            <span className="text-xs text-zinc-400">Restante para hoy</span>
             <div className={`text-xl font-bold font-mono ${calRemaining >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {calRemaining >= 0 ? `${Math.round(calRemaining)} kcal` : `+${Math.abs(Math.round(calRemaining))} exceso`}
             </div>
@@ -181,7 +211,7 @@ export const NutritionTab: React.FC<Props> = ({
             <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-red-500 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, (currentLog.protein / targetMacros.protein) * 100)}%` }}
+                style={{ width: `${Math.min(100, (currentLog.protein / (targetMacros.protein || 1)) * 100)}%` }}
               />
             </div>
             <span className="text-[10px] text-zinc-400 mt-1 block">
@@ -198,10 +228,10 @@ export const NutritionTab: React.FC<Props> = ({
             <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, (currentLog.carbs / targetMacros.carbs) * 100)}%` }}
+                style={{ width: `${Math.min(100, (currentLog.carbs / (targetMacros.carbs || 1)) * 100)}%` }}
               />
             </div>
-            <span className="text-[10px] text-zinc-400 mt-1 block">Energía glucógeno</span>
+            <span className="text-[10px] text-zinc-400 mt-1 block">Energía muscular</span>
           </div>
 
           {/* Grasas */}
@@ -213,7 +243,7 @@ export const NutritionTab: React.FC<Props> = ({
             <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
               <div
                 className="h-full bg-yellow-500 rounded-full transition-all duration-500"
-                style={{ width: `${Math.min(100, (currentLog.fats / targetMacros.fats) * 100)}%` }}
+                style={{ width: `${Math.min(100, (currentLog.fats / (targetMacros.fats || 1)) * 100)}%` }}
               />
             </div>
             <span className="text-[10px] text-zinc-400 mt-1 block">Salud hormonal</span>
@@ -346,10 +376,22 @@ export const NutritionTab: React.FC<Props> = ({
           Comidas Registradas Hoy ({currentLog.foods?.length || 0})
         </h3>
 
+        {currentLog.foods?.length === 0 && (
+          <div className="bg-[#1c1c1e] border border-dashed border-white/10 rounded-2xl p-6 text-center text-zinc-400 space-y-2">
+            <Utensils className="w-8 h-8 text-zinc-500 mx-auto" />
+            <p className="text-xs font-semibold text-zinc-300">Aún no has registrado ninguna comida hoy.</p>
+            <p className="text-[11px] text-zinc-500 max-w-xs mx-auto">
+              Pulsa en los alimentos frecuentes de arriba o añade tus platos para ir rellenando tu diario calórico.
+            </p>
+          </div>
+        )}
+
         {mealTypes.map(m => {
           const mealFoods = (currentLog.foods || []).filter(f => f.mealType === m.id);
           const mealCals = mealFoods.reduce((sum, f) => sum + f.calories, 0);
           const mealProt = mealFoods.reduce((sum, f) => sum + f.protein, 0);
+
+          if (mealFoods.length === 0) return null;
 
           return (
             <div key={m.id} className="bg-[#1c1c1e] border border-white/10 rounded-2xl p-4 space-y-2">
@@ -363,36 +405,32 @@ export const NutritionTab: React.FC<Props> = ({
                 </div>
               </div>
 
-              {mealFoods.length === 0 ? (
-                <p className="text-xs text-zinc-500 italic py-1">Sin alimentos registrados</p>
-              ) : (
-                <div className="space-y-1.5 pt-1">
-                  {mealFoods.map(food => (
-                    <div key={food.id} className="flex items-center justify-between py-1 px-2 rounded-lg bg-black/20 text-xs">
-                      <div>
-                        <span className="font-medium text-zinc-200">{food.name}</span>
-                        <span className="text-[10px] text-zinc-500 ml-2 font-mono">({food.portion})</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-orange-400 text-[11px]">{food.calories} kcal</span>
-                        <span className="font-mono text-red-400 text-[11px]">{food.protein}g P</span>
-                        <button
-                          onClick={() => handleDeleteFood(food.id)}
-                          className="text-zinc-600 hover:text-red-400 p-1"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+              <div className="space-y-1.5 pt-1">
+                {mealFoods.map(food => (
+                  <div key={food.id} className="flex items-center justify-between py-1 px-2 rounded-lg bg-black/20 text-xs">
+                    <div>
+                      <span className="font-medium text-zinc-200">{food.name}</span>
+                      <span className="text-[10px] text-zinc-500 ml-2 font-mono">({food.portion})</span>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-orange-400 text-[11px]">{food.calories} kcal</span>
+                      <span className="font-mono text-red-400 text-[11px]">{food.protein}g P</span>
+                      <button
+                        onClick={() => handleDeleteFood(food.id)}
+                        className="text-zinc-600 hover:text-red-400 p-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Hábitos: Sueño e Hidratación */}
+      {/* Hábitos: Sueño e Hidratación (Inician limpios a 0) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Tracker de Sueño */}
         <div className="bg-[#1c1c1e] border border-white/10 rounded-2xl p-4 space-y-3">
@@ -401,19 +439,21 @@ export const NutritionTab: React.FC<Props> = ({
               <Moon className="w-4 h-4 text-purple-400" />
               Horas de Sueño
             </span>
-            <span className="text-sm font-bold font-mono text-purple-400">{currentLog.sleepHours || 8}h</span>
+            <span className="text-sm font-bold font-mono text-purple-400">
+              {currentLog.sleepHours > 0 ? `${currentLog.sleepHours}h` : '0h (sin registrar)'}
+            </span>
           </div>
           <input
             type="range"
-            min="4"
+            min="0"
             max="12"
             step="0.5"
-            value={currentLog.sleepHours || 8}
+            value={currentLog.sleepHours || 0}
             onChange={(e) => handleSleepChange(parseFloat(e.target.value))}
             className="w-full accent-purple-500 cursor-pointer"
           />
           <span className="text-[10px] text-zinc-500 block">
-            Meta personal: {user.sleepHoursGoal}h para óptima recuperación del SNC
+            Meta personal: {user.sleepHoursGoal}h para recuperación óptima
           </span>
         </div>
 
@@ -424,7 +464,9 @@ export const NutritionTab: React.FC<Props> = ({
               <Droplets className="w-4 h-4 text-cyan-400" />
               Hidratación Diaria
             </span>
-            <span className="text-sm font-bold font-mono text-cyan-400">{currentLog.waterLiters || 2.5}L</span>
+            <span className="text-sm font-bold font-mono text-cyan-400">
+              {(currentLog.waterLiters || 0).toFixed(1)} L
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -451,4 +493,3 @@ export const NutritionTab: React.FC<Props> = ({
     </div>
   );
 };
-

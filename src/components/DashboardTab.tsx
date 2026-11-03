@@ -3,7 +3,7 @@ import { UserProfile, Workout, NutritionLog, PlannedDay, MuscleGroup } from '../
 import { NutritionEngine } from '../services/nutritionEngine';
 import { TrainingEngine, ALL_MUSCLE_GROUPS } from '../services/trainingEngine';
 import { ScoreEngine } from '../services/scoreEngine';
-import { Sparkles, Dumbbell, Utensils, CheckCircle2, ChevronRight, Moon, Flame } from 'lucide-react';
+import { Sparkles, Dumbbell, Utensils, CheckCircle2, ChevronRight, Moon, Flame, MessageSquare, Plus } from 'lucide-react';
 import { triggerHaptic } from '../services/haptics';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   workouts: Workout[];
   planning: PlannedDay[];
   onNavigateTab: (tab: 'workouts' | 'nutrition' | 'planning' | 'stats') => void;
+  onOpenAICoach: () => void;
 }
 
 export const DashboardTab: React.FC<Props> = ({
@@ -20,6 +21,7 @@ export const DashboardTab: React.FC<Props> = ({
   workouts,
   planning,
   onNavigateTab,
+  onOpenAICoach,
 }) => {
   const targetMacros = NutritionEngine.calculateTargetMacros(user);
   
@@ -109,10 +111,13 @@ export const DashboardTab: React.FC<Props> = ({
             Plan: <span className="text-blue-400 font-semibold">{user.goal === 'fatLoss' ? 'Perder Grasa' : user.goal === 'muscleGain' ? 'Ganar Músculo' : 'Recomposición'}</span> • {user.weight} kg
           </p>
         </div>
-        <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-zinc-300">
+        <button
+          onClick={() => onNavigateTab('nutrition')}
+          className="flex items-center gap-1.5 px-3 py-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-xs text-zinc-300 transition"
+        >
           <Moon className="w-3.5 h-3.5 text-purple-400" />
-          <span>Sueño: <strong>{currentSleep}h</strong> / {user.sleepHoursGoal}h</span>
-        </div>
+          <span>Sueño: <strong>{currentSleep > 0 ? `${currentSleep}h` : 'Registrar'}</strong></span>
+        </button>
       </div>
 
       {/* Tarjeta Principal: Daily Score */}
@@ -130,11 +135,11 @@ export const DashboardTab: React.FC<Props> = ({
               <span className="text-lg text-zinc-400 font-normal">/100</span>
             </h3>
             <p className="text-xs text-zinc-300 max-w-[210px] leading-relaxed">
-              {scoreData.total >= 85
+              {currentCalories === 0 && !workoutToday
+                ? 'Empieza registrando tus comidas o tu entreno de hoy para sumar puntos a tu score.'
+                : scoreData.total >= 85
                 ? '¡Rendimiento sobresaliente! Estímulo y nutrientes al 100%.'
-                : scoreData.total >= 60
-                ? 'Buen progreso. Ajusta proteína y completa el entreno para maximizar.'
-                : 'Inicia el día registrando tus comidas y actividad física.'}
+                : 'Buen progreso. Ajusta proteína y completa el entreno para maximizar.'}
             </p>
           </div>
 
@@ -193,6 +198,41 @@ export const DashboardTab: React.FC<Props> = ({
         </div>
       </div>
 
+      {/* Tarjeta Destacada del Coach IA */}
+      <div className="bg-gradient-to-r from-purple-950/40 via-indigo-950/40 to-blue-950/40 border border-purple-500/30 rounded-3xl p-4 shadow-lg space-y-3">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-300 flex items-center justify-center flex-shrink-0 mt-0.5 border border-purple-500/30">
+              <Sparkles className="w-5 h-5 text-purple-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold text-white">Agente Coach IA</h4>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold">
+                  En línea
+                </span>
+              </div>
+              <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
+                {currentCalories === 0
+                  ? 'Tu diario de hoy está listo para que registres tus comidas. ¿Quieres que te planifique los macros?'
+                  : nutritionFeedback}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            triggerHaptic('light');
+            onOpenAICoach();
+          }}
+          className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition shadow-md shadow-purple-600/20 active:scale-95"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Consultar al Coach IA (Dudas, Recetas, Pesos)</span>
+        </button>
+      </div>
+
       {/* Anillos de Macronutrientes */}
       <div>
         <div className="flex items-center justify-between mb-3">
@@ -204,7 +244,7 @@ export const DashboardTab: React.FC<Props> = ({
             onClick={() => onNavigateTab('nutrition')}
             className="text-xs text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-0.5"
           >
-            Añadir comida <ChevronRight className="w-3.5 h-3.5" />
+            {currentCalories === 0 ? '+ Empezar a rellenar' : 'Añadir comida'} <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -213,24 +253,6 @@ export const DashboardTab: React.FC<Props> = ({
           {renderMacroRing('Proteína', currentProtein, targetMacros.protein, 'g', 'text-red-500', 'text-red-950')}
           {renderMacroRing('Carbs', currentCarbs, targetMacros.carbs, 'g', 'text-blue-500', 'text-blue-950')}
           {renderMacroRing('Grasas', currentFats, targetMacros.fats, 'g', 'text-yellow-500', 'text-yellow-950')}
-        </div>
-      </div>
-
-      {/* Tarjeta IA Científica Adaptativa */}
-      <div className="bg-blue-950/30 border border-blue-500/20 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
-        <div className="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Sparkles className="w-5 h-5" />
-        </div>
-        <div className="space-y-1">
-          <h4 className="text-xs font-bold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
-            IA Adaptativa Científica
-          </h4>
-          <p className="text-xs text-zinc-300 leading-relaxed">
-            {nutritionFeedback}
-          </p>
-          <p className="text-[11px] text-blue-400 font-medium pt-1">
-            {volumeRec.summary}
-          </p>
         </div>
       </div>
 
@@ -245,7 +267,7 @@ export const DashboardTab: React.FC<Props> = ({
             onClick={() => onNavigateTab('planning')}
             className="text-xs text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-0.5"
           >
-            Ver planning semanal <ChevronRight className="w-3.5 h-3.5" />
+            Ver planning <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -334,4 +356,3 @@ export const DashboardTab: React.FC<Props> = ({
     </div>
   );
 };
-

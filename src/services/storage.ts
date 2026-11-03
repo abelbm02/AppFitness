@@ -1,10 +1,10 @@
 import { UserProfile, Workout, NutritionLog, PlannedDay, FoodItem } from '../types';
 
-const USERS_KEY = 'fitscience_users';
-const ACTIVE_USER_ID_KEY = 'fitscience_active_user_id';
-const WORKOUTS_KEY = 'fitscience_workouts';
-const LOGS_KEY = 'fitscience_nutrition_logs';
-const PLANNING_KEY = 'fitscience_weekly_planning';
+const USERS_KEY = 'fitscience_users_v2';
+const ACTIVE_USER_ID_KEY = 'fitscience_active_user_id_v2';
+const WORKOUTS_KEY = 'fitscience_workouts_v2';
+const LOGS_KEY = 'fitscience_nutrition_logs_v2';
+const PLANNING_KEY = 'fitscience_weekly_planning_v2';
 
 export const COMMON_FOODS: Omit<FoodItem, 'id' | 'mealType'>[] = [
   { name: 'Pechuga de Pollo (plancha)', calories: 165, protein: 31, carbs: 0, fats: 3.6, portion: '100g' },
@@ -19,7 +19,9 @@ export const COMMON_FOODS: Omit<FoodItem, 'id' | 'mealType'>[] = [
   { name: 'Salmón fresco a la plancha', calories: 208, protein: 20, carbs: 0, fats: 13, portion: '100g' },
   { name: 'Patata cocida / asada', calories: 87, protein: 2, carbs: 20, fats: 0.1, portion: '100g' },
   { name: 'Frutos secos / Nueces', calories: 185, protein: 4.3, carbs: 3.9, fats: 18.5, portion: '30g' },
-  { name: 'Ternera magra', calories: 155, protein: 26, carbs: 0, fats: 5.5, portion: '100g' }
+  { name: 'Ternera magra', calories: 155, protein: 26, carbs: 0, fats: 5.5, portion: '100g' },
+  { name: 'Queso fresco batido 0%', calories: 46, protein: 8, carbs: 3.5, fats: 0.1, portion: '100g' },
+  { name: 'Manzana', calories: 72, protein: 0.4, carbs: 19, fats: 0.2, portion: '1 unidad' }
 ];
 
 export const DEFAULT_USERS: UserProfile[] = [
@@ -50,8 +52,8 @@ export const DEFAULT_USERS: UserProfile[] = [
 ];
 
 export const DEFAULT_PLANNING: PlannedDay[] = [
-  { dayName: 'Lunes', routineName: 'Torso: Empuje Pesado', focusMuscles: ['Pecho', 'Hombros', 'Brazos'], isRestDay: false, calorieTargetDesc: 'Superávit alto (+300 kcal)', completed: true },
-  { dayName: 'Martes', routineName: 'Torso: Tracción & Espalda', focusMuscles: ['Espalda', 'Brazos'], isRestDay: false, calorieTargetDesc: 'Superávit estándar (+250 kcal)', completed: true },
+  { dayName: 'Lunes', routineName: 'Torso: Empuje Pesado', focusMuscles: ['Pecho', 'Hombros', 'Brazos'], isRestDay: false, calorieTargetDesc: 'Superávit alto (+300 kcal)', completed: false },
+  { dayName: 'Martes', routineName: 'Torso: Tracción & Espalda', focusMuscles: ['Espalda', 'Brazos'], isRestDay: false, calorieTargetDesc: 'Superávit estándar (+250 kcal)', completed: false },
   { dayName: 'Miércoles', routineName: 'Descanso Activo / Cardio', focusMuscles: ['Core'], isRestDay: true, calorieTargetDesc: 'Mantenimiento (isocalórico)', completed: false },
   { dayName: 'Jueves', routineName: 'Piernas Enfocada en Cuádriceps', focusMuscles: ['Piernas', 'Core'], isRestDay: false, calorieTargetDesc: 'Superávit alto (+350 kcal)', completed: false },
   { dayName: 'Viernes', routineName: 'Torso Hipertrofia & Brazos', focusMuscles: ['Pecho', 'Espalda', 'Brazos'], isRestDay: false, calorieTargetDesc: 'Superávit estándar (+250 kcal)', completed: false },
@@ -59,59 +61,8 @@ export const DEFAULT_PLANNING: PlannedDay[] = [
   { dayName: 'Domingo', routineName: 'Recuperación Total & Saunas', focusMuscles: [], isRestDay: true, calorieTargetDesc: 'Mantenimiento / Recarga limpia', completed: false },
 ];
 
+// Today starts clean with NO workouts completed yet
 export const DEFAULT_WORKOUTS: Workout[] = [
-  {
-    id: 'w-today',
-    name: 'Torso: Empuje & Hombro (Fuerza)',
-    date: new Date().toISOString().split('T')[0],
-    userId: 'user-abel-001',
-    durationMinutes: 65,
-    isCompleted: true,
-    notes: 'Sensaciones excelentes. Subida de 2.5kg en Press Banca con RPE 8.',
-    exercises: [
-      {
-        id: 'ex-1',
-        name: 'Press de Banca con Barra',
-        muscleGroup: 'Pecho',
-        sets: [
-          { id: 's1', weight: 85, reps: 8, rpe: 8, isCompleted: true, date: new Date().toISOString() },
-          { id: 's2', weight: 85, reps: 8, rpe: 8.5, isCompleted: true, date: new Date().toISOString() },
-          { id: 's3', weight: 85, reps: 7, rpe: 9, isCompleted: true, date: new Date().toISOString() },
-          { id: 's4', weight: 80, reps: 9, rpe: 9, isCompleted: true, date: new Date().toISOString() }
-        ]
-      },
-      {
-        id: 'ex-2',
-        name: 'Press Militar con Mancuernas',
-        muscleGroup: 'Hombros',
-        sets: [
-          { id: 's5', weight: 26, reps: 10, rpe: 8, isCompleted: true, date: new Date().toISOString() },
-          { id: 's6', weight: 26, reps: 9, rpe: 8.5, isCompleted: true, date: new Date().toISOString() },
-          { id: 's7', weight: 24, reps: 10, rpe: 9, isCompleted: true, date: new Date().toISOString() }
-        ]
-      },
-      {
-        id: 'ex-3',
-        name: 'Fondos en Paralelas (Lastrados)',
-        muscleGroup: 'Pecho',
-        sets: [
-          { id: 's8', weight: 15, reps: 10, rpe: 8, isCompleted: true, date: new Date().toISOString() },
-          { id: 's9', weight: 15, reps: 9, rpe: 8.5, isCompleted: true, date: new Date().toISOString() },
-          { id: 's10', weight: 15, reps: 8, rpe: 9, isCompleted: true, date: new Date().toISOString() }
-        ]
-      },
-      {
-        id: 'ex-4',
-        name: 'Extensiones de Tríceps en Polea',
-        muscleGroup: 'Brazos',
-        sets: [
-          { id: 's11', weight: 35, reps: 12, rpe: 8.5, isCompleted: true, date: new Date().toISOString() },
-          { id: 's12', weight: 35, reps: 11, rpe: 9, isCompleted: true, date: new Date().toISOString() },
-          { id: 's13', weight: 30, reps: 13, rpe: 9.5, isCompleted: true, date: new Date().toISOString() }
-        ]
-      }
-    ]
-  },
   {
     id: 'w-yesterday',
     name: 'Espalda & Tracción (Sobrecarga)',
@@ -155,24 +106,8 @@ export const DEFAULT_WORKOUTS: Workout[] = [
   }
 ];
 
+// Clean initial logs: TODAY starts completely empty (0 kcal, 0 protein, 0 water, no foods)
 export const DEFAULT_LOGS: NutritionLog[] = [
-  {
-    id: 'log-today',
-    userId: 'user-abel-001',
-    date: new Date().toISOString().split('T')[0],
-    calories: 2750,
-    protein: 165,
-    carbs: 320,
-    fats: 72,
-    sleepHours: 8.2,
-    waterLiters: 3.0,
-    foods: [
-      { id: 'f1', name: 'Avena con Proteína y Plátano', calories: 415, protein: 32, carbs: 63, fats: 5, portion: '1 bol', mealType: 'desayuno' },
-      { id: 'f2', name: 'Arroz blanco con 200g Pechuga y AOVE', calories: 580, protein: 65, carbs: 56, fats: 11, portion: 'Plato principal', mealType: 'almuerzo' },
-      { id: 'f3', name: 'Yogur Griego con Nueces y Miel', calories: 280, protein: 16, carbs: 18, fats: 15, portion: 'Merienda', mealType: 'merienda' },
-      { id: 'f4', name: 'Salmón al horno con Patatas asadas', calories: 620, protein: 42, carbs: 45, fats: 26, portion: 'Cena', mealType: 'cena' },
-    ]
-  },
   {
     id: 'log-yesterday',
     userId: 'user-abel-001',
@@ -207,18 +142,6 @@ export const DEFAULT_LOGS: NutritionLog[] = [
     fats: 69,
     sleepHours: 7.5,
     waterLiters: 2.7,
-    foods: []
-  },
-  {
-    id: 'log-d4',
-    userId: 'user-abel-001',
-    date: new Date(Date.now() - 86400000 * 4).toISOString().split('T')[0],
-    calories: 2800,
-    protein: 168,
-    carbs: 330,
-    fats: 74,
-    sleepHours: 8.5,
-    waterLiters: 3.5,
     foods: []
   }
 ];
@@ -288,6 +211,48 @@ export class StorageService {
     localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
   }
 
+  static getTodayLog(userId: string): NutritionLog {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const logs = this.getNutritionLogs();
+    const existing = logs.find(l => l.date === todayStr && (l.userId === userId || !l.userId));
+    if (existing) return existing;
+
+    // Return a pristine clean slate log for today
+    const cleanToday: NutritionLog = {
+      id: `log-${Date.now()}`,
+      userId,
+      date: todayStr,
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fats: 0,
+      sleepHours: 0,
+      waterLiters: 0,
+      foods: []
+    };
+    return cleanToday;
+  }
+
+  static resetTodayLog(userId: string): NutritionLog {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const logs = this.getNutritionLogs().filter(l => !(l.date === todayStr && (l.userId === userId || !l.userId)));
+    const cleanLog: NutritionLog = {
+      id: `log-${Date.now()}`,
+      userId,
+      date: todayStr,
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fats: 0,
+      sleepHours: 0,
+      waterLiters: 0,
+      foods: []
+    };
+    logs.unshift(cleanLog);
+    this.saveNutritionLogs(logs);
+    return cleanLog;
+  }
+
   static getPlanning(): PlannedDay[] {
     const raw = localStorage.getItem(PLANNING_KEY);
     if (!raw) {
@@ -331,4 +296,3 @@ export class StorageService {
     }
   }
 }
-

@@ -1,12 +1,13 @@
 import React from 'react';
 import { UserProfile } from '../types';
-import { Smartphone, User, ChevronDown } from 'lucide-react';
+import { Smartphone, User, ChevronDown, Sparkles } from 'lucide-react';
 
 interface Props {
   user: UserProfile;
   users: UserProfile[];
   onSelectUser: (id: string) => void;
   onOpenIPhoneModal: () => void;
+  onOpenAICoach: () => void;
 }
 
 export const Header: React.FC<Props> = ({
@@ -14,11 +15,12 @@ export const Header: React.FC<Props> = ({
   users,
   onSelectUser,
   onOpenIPhoneModal,
+  onOpenAICoach,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 px-4 py-3 pt-safe">
       <div className="max-w-4xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1px] shadow-lg shadow-blue-500/20">
             <div className="w-full h-full bg-black rounded-[11px] flex items-center justify-center">
               <span className="font-black text-sm bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">FS</span>
@@ -34,6 +36,15 @@ export const Header: React.FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* AI Coach Button */}
+          <button
+            onClick={onOpenAICoach}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-600/30 via-indigo-600/30 to-blue-600/30 hover:from-purple-600/40 hover:to-blue-600/40 text-purple-300 border border-purple-500/30 rounded-full text-xs font-bold shadow-md shadow-purple-500/10 transition active:scale-95 animate-pulse"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <span>Coach IA</span>
+          </button>
+
           {/* User selector dropdown */}
           <div className="relative group">
             <select
@@ -54,15 +65,14 @@ export const Header: React.FC<Props> = ({
           {/* Connect iPhone Button */}
           <button
             onClick={onOpenIPhoneModal}
-            className="flex items-center gap-1 px-2.5 py-1.5 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 hover:from-blue-600/30 hover:to-indigo-600/30 text-blue-400 border border-blue-500/30 rounded-full text-xs font-semibold shadow-sm transition active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 rounded-full text-xs font-semibold shadow-sm transition active:scale-95"
+            title="Conectar iPhone"
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Ver en iPhone</span>
-            <span className="sm:hidden">iPhone</span>
+            <Smartphone className="w-3.5 h-3.5 text-blue-400" />
+            <span className="hidden sm:inline">iPhone</span>
           </button>
         </div>
       </div>
     </header>
   );
 };
-
